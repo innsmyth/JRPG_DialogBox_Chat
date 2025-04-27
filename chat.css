@@ -1,0 +1,145 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;500;600;800;900&display=swap');
+
+* {
+    font-family: 'Nunito', sans-serif;
+    color: #fff;
+    overflow: hidden;
+    text-align: center;
+    scroll-behavior: smooth;
+    letter-spacing: 0px;
+    font-weight: 700;
+}
+
+.user-box{
+    position: relative;
+    font-size: {{fontSize}}px;
+    text-align: center;
+    width: fit-content;
+    max-width: fit-content;
+    height: auto;
+    vertical-align: center !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    word-wrap: break-word;
+  	display: flex;
+  	top: 0px;
+  	margin-bottom: 2px;
+  	letter-spacing: 1px !important;
+}
+
+.parent-container{
+    height: auto;
+}
+
+.avatar-container{
+    height: 390px;
+    display: flex;
+    text-align: center;
+    flex-flow: row wrap;
+}
+
+.avatar {
+    position: relative;
+}
+
+.avatar > img {
+    position: relative;
+    width: 100%;
+}
+
+.main-container{
+    display: {{alignMessages}};
+    height: auto;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    text-align: center;
+}
+
+.message-row{
+    position:relative;
+    flex: 0 0 auto;
+    width:95%;
+    height: auto;
+    margin-bottom: 10px;
+    text-align: left;
+    overflow: hidden;
+}
+
+.badge{
+    display:{{badgesVisibility}};
+    height: {{badgeSize}}px;
+    width: auto;
+    vertical-align: center;
+    background-repeat:no-repeat;
+}
+
+.badges{
+    display: inline;
+    height: auto;
+    width: fit-content;
+    top: 2px;
+    position: relative;
+  	margin-right: 3px;
+}
+
+
+.user-message{
+    font-size: {{fontSize}}px;
+    height: auto;
+    display: block;
+    width: 90%;
+    position: relative;
+    z-index: 1;
+  	word-wrap: break-word;
+  	top: 0px;
+  	text-align: left;
+    font-weight: 600 !important;
+  	margin-left: 25px;
+  	text-transform: lowercase;
+}
+
+.msgContainer {
+ 	 position: relative;
+}
+
+.dots {
+  position: relative;
+  float: left;
+  bottom: 7px;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 4px;
+  margin-right: 10px;
+  left: 3px;
+  width: max-width;
+}
+
+.stars {
+  position: relative;
+  float: left;
+  margin-right: 10px;
+  top: 2px;
+}
+
+.stars > img {
+	position: absolute;
+  	top: 14px;
+  	left: 14px;
+}
+
+.stars > icon {
+	position: absolute;
+  	top: 16px;
+  	left: 16px;
+}
+
+.emote{
+    height: {{emoteSize}}px;
+    width: auto;
+  	vertical-align: middle;
+}
+
+.action{
+    font-style: italic;
+}
