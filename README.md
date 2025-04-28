@@ -14,11 +14,11 @@ JRPG Dialog box inspired chat for stream elements
 8. Then add an animation to avatars within the container when they first appear
 9. Then add custom chat avatar to project via imgur link
 
-##Future Additions:
-###Version 2 Features:
+## Future Additions:
+### Version 2 Features:
 1. Different avatars for specific users
 2. Different placement of avatars for specific users
 3. Different icons and colors for specific users
 
-###Version 3 Features
+### Version 3 Features
 1. multiple avatars at once with dynamic placement (have old avatars be in backgroud and lower opacity)
