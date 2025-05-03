@@ -3,7 +3,7 @@
 
 * {
     font-family: 'Nunito', sans-serif;
-    color: #fff;
+    color: rgba(239, 239, 238, 1.0);
     overflow: hidden;
     text-align: center;
     scroll-behavior: smooth;
@@ -33,7 +33,7 @@
 }
 
 .avatar-container{
-    height: 390px;
+    height: 500px;
     display: flex;
     text-align: center;
     flex-flow: row wrap;
@@ -59,11 +59,14 @@
 .message-row{
     position:relative;
     flex: 0 0 auto;
-    width:95%;
+    width:96%;
     height: auto;
     margin-bottom: 10px;
     text-align: left;
     overflow: hidden;
+    border-radius: 12px;
+    padding: 8px 10px 4px 10px;
+    border: solid 2px;
 }
 
 .badge{
@@ -95,7 +98,7 @@
   	top: 0px;
   	text-align: left;
     font-weight: 600 !important;
-  	margin-left: 25px;
+  	margin-left: 0px; /*25px;*/
   	text-transform: lowercase;
 }
 
@@ -104,14 +107,14 @@
 }
 
 .dots {
-  position: relative;
+  position: absolute;
   float: left;
-  bottom: 7px;
+  bottom:0px;
   font-weight: 900;
   font-size: 22px;
   letter-spacing: 4px;
   margin-right: 10px;
-  left: 3px;
+  left: 15px;
   width: max-width;
 }
 
@@ -122,16 +125,16 @@
   top: 2px;
 }
 
-.stars > img {
-	position: absolute;
-  	top: 14px;
-  	left: 14px;
-}
-
 .stars > icon {
 	position: absolute;
   	top: 16px;
   	left: 16px;
+}
+
+.continue {
+  position: relative;
+  float: right;
+  width: 5%;
 }
 
 .emote{
