@@ -1,4 +1,4 @@
-let totalMessages = 0, messagesLimit = 0, colorCycle = 0, nickColor = "user", removeSelector, addition, customNickColor, channelName,
+let totalMessages = 0, messagesLimit = 0, colorCycle= 0, nickColor = "user", removeSelector, addition, customNickColor, channelName,
     provider;
 let animationIn = 'fadeInUp';
 let animationOut = 'fadeOut';
@@ -10,6 +10,11 @@ let iSpeedDef = 30;
 let iTextPos = iTextPosDef; // initialise text position
 let iSpeed = iSpeedDef; // time delay of print out
 let myMessage = "default";
+let bkgdImg = ["https://imgur.com/daJRCMU.png", "https://imgur.com/vQlqCnW.png"];
+let msgIcon = ["fa-solid fa-diamond", "fa-solid fa-eye"];
+let msgMainClr = ["rgba(113, 160, 156, 1.0)", "rgba(246, 174, 40, 1.0)"];
+let msgAcntClr = ["rgba(246, 174, 40, 1.0)", "rgba(113, 160, 156, 1.0)"];
+let lastDelay = 0;
 
 window.addEventListener('onEventReceived', function (obj) {
     if (obj.detail.event.listener === 'widget-button') {
@@ -88,8 +93,13 @@ window.addEventListener('onEventReceived', function (obj) {
         return;
     }
     
-    addAvatar();
     if (obj.detail.listener !== "message") return;
+
+    loadAvatarAndMessage(obj);
+    
+});
+
+function loadAvatarAndMessage(obj) {
     let data = obj.detail.event.data;
     if (data.text.startsWith("!") && hideCommands === "yes") return;
     if (ignoredUsers.indexOf(data.nick) !== -1) return;
@@ -105,8 +115,11 @@ window.addEventListener('onEventReceived', function (obj) {
     }
     let username = data.displayName;
     username = `${username}`;
-    addMessage(username, badges, message, data.isAction, data.userId, data.msgId);
-});
+    let hideElements = hideAfter * 1000 + data.text.length * iSpeedDef + data.emotes.length * 300;
+    iSpeed = iSpeedDef;
+    addAvatar(hideElements);
+    addMessage(username, badges, message, data.isAction, data.userId, data.msgId, hideElements);
+}
 
 window.addEventListener('onWidgetLoad', function (obj) {
     const fieldData = obj.detail.fieldData;
@@ -187,15 +200,15 @@ function html_encode(e) {
     });
 }
 
-function addAvatar(){
+function addAvatar(hideElements){
     const element = $.parseHTML(`
         <div class="avatar">
-            <img src="https://i.imgur.com/KsRCTtI.png">
+            <img src="https://imgur.com/4yONwFv.png">
         </div>
     `);
     if (hideAfter !== 999) {
-        $(element).appendTo('.avatar-container').delay(hideAfter * 1000).queue(function () {
-            $(this).removeClass(animationIn).addClass(animationOut).delay(1000).queue(function () {
+        $(element).appendTo('.avatar-container').delay(hideElements).queue(function () {
+            $(this).removeClass(animationIn).addClass(animationOut).delay(0).queue(function () {
                 $(this).remove()
             }).dequeue();
         });
@@ -204,96 +217,66 @@ function addAvatar(){
     }
 }
 
-function addMessage(username, badges, message, isAction, uid, msgId) {
+function addMessage(username, badges, message, isAction, uid, msgId, hideElements) {
     totalMessages += 1;
     let actionClass = "";
     if (isAction) {
         actionClass = "action";
     }
-    if (colorCycle == 0) {
-      const element = $.parseHTML(`
-      <div data-sender="${uid}" data-msgid="${msgId}" class="message-row {animationIn} animated" id="msg-${totalMessages}">
-        <div class="stars"><svg height="48" width="48">
-                <circle cx="24" cy="24" r="23" stroke="#5044e8" stroke-width="2" fill="none" />
-            </svg>
-            <icon class="fa-solid fa-diamond" style="color: #f6cb77;" />
-        </div>
-        <div class="msgContainer">
-          <div class="user-box ${actionClass}" style="color: #5044e8 !important;"><div class="badges">${badges}</div>${username}</div>
-          <div class="dots" style="color: #5d50ff !important;">..</div><div id="typed-message" class="user-message ${actionClass}"></div>
-        </div>
-      </div>`);
-      if (addition === "append") {
-          if (hideAfter !== 999) {
-              $(element).appendTo('.main-container').delay(hideAfter * 1000).queue(function () {
-                  $(this).removeClass(animationIn).addClass(animationOut).delay(0).queue(function () {
-                      $(this).remove()
-                  }).dequeue();
-              });
-          } else {
-              $(element).appendTo('.main-container');
-          }
-      } else {
-          if (hideAfter !== 999) {
-              $(element).prependTo('.main-container').delay(hideAfter * 1000).queue(function () {
-                  $(this).removeClass(animationIn).addClass(animationOut).delay(0).queue(function () {
-                      $(this).remove()
-                  }).dequeue();
-              });
-          } else {
-              $(element).prependTo('.main-container');
-          }
-      }
-      myMessage = message;
-      iTextPos = iTextPosDef;
-      iSpeed = iSpeedDef;
-      typewriter();
-      colorCycle += 1;
+
+    const element = $.parseHTML(`
+    <div data-sender="${uid}" data-msgid="${msgId}" class="message-row {animationIn} animated" id="msg-${totalMessages}" style="background-image: url(${bkgdImg[colorCycle]}); background-repeat:no-repeat; border-color: ${msgAcntClr[colorCycle]};">
+    <div class="stars"><svg height="48" width="48">
+            <circle cx="24" cy="24" r="23" stroke="${msgMainClr[colorCycle]}" stroke-width="2" fill="none" />
+        </svg>
+        <icon class="${msgIcon[colorCycle]}" style="color: ${msgAcntClr[colorCycle]};" />
+    </div>
+    <div class="dots" style="color: ${msgMainClr[colorCycle]} !important;">..</div>
+    <div class="msgContainer">
+        <div class="user-box ${actionClass}" style="color: ${msgMainClr[colorCycle]} !important;"><div class="badges">${badges}</div>${username}</div>
+        <div id="typed-message" class="user-message ${actionClass}"></div>
+    </div>
+    <div class="continue">
+        <icon class="fa-solid fa-sort-down fa-beat" style="color: ${msgAcntClr[colorCycle]};" />
+    </div>
+    </div>`);
+    if (addition === "append") {
+        if (hideAfter !== 999) {
+            $(element).appendTo('.main-container').delay(hideElements).queue(function () {
+                $(this).removeClass(animationIn).addClass(animationOut).delay(0).queue(function () {
+                    $(this).remove()
+                }).dequeue()
+            });
+        } else {
+            $(element).appendTo('.main-container');
+        }
+    } else {
+        if (hideAfter !== 999) {
+            $(element).prependTo('.main-container').delay(hideElements).queue(function () {
+                $(this).removeClass(animationIn).addClass(animationOut).delay(0).queue(function () {
+                    $(this).remove()
+                }).dequeue()
+            });
+        } else {
+            $(element).prependTo('.main-container');
+        }
     }
-  
-    else if (colorCycle == 1) {
-      const element = $.parseHTML(`
-      <div data-sender="${uid}" data-msgid="${msgId}" class="message-row {animationIn} animated" id="msg-${totalMessages}">
-        <div class="stars"><svg height="48" width="48">
-                <circle cx="24" cy="24" r="23" stroke="#f6cb77" stroke-width="2" fill="none" />
-            </svg>
-            <icon class="fa-regular fa-eye" style="color: #5044e8;" />
-        </div>
-        <div class="msgContainer">
-          <div class="user-box ${actionClass}" style="color: #ffd17a !important;"><div class="badges">${badges}</div>${username}</div>
-          <div class="dots" style="color: #ffd17a !important;">..</div><div id="typed-message" class="user-message ${actionClass}"></div>
-        </div>
-      </div>`);
-      if (addition === "append") {
-          if (hideAfter !== 999) {
-              $(element).appendTo('.main-container').delay(hideAfter * 1000).queue(function () {
-                  $(this).removeClass(animationIn).addClass(animationOut).delay(0).queue(function () {
-                      $(this).remove()
-                  }).dequeue();
-              });
-          } else {
-              $(element).appendTo('.main-container');
-          }
-      } else {
-          if (hideAfter !== 999) {
-              $(element).prependTo('.main-container').delay(hideAfter * 1000).queue(function () {
-                  $(this).removeClass(animationIn).addClass(animationOut).delay(0).queue(function () {
-                      $(this).remove()
-                  }).dequeue();
-              });
-          } else {
-              $(element).prependTo('.main-container');
-          }
-      }
-      myMessage = message;
-      iTextPos = iTextPosDef;
-      iSpeed = iSpeedDef;
-      typewriter();
-      colorCycle = 0;
+    myMessage = message;
+    iTextPos = iTextPosDef;
+    iSpeed = iSpeedDef;
+    typewriter();
+
+    if (colorCycle < msgIcon.length-1){
+        colorCycle++;
+    } else {
+        colorCycle = 0;
     }
 
     if (totalMessages > messagesLimit) {
         removeRow();
+        lastDelay = 0;
+    } else {
+        lastDelay = hideElements;
     }
 }
 
