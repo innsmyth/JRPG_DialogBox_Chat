@@ -4,9 +4,7 @@ JRPG Dialog box inspired chat for stream elements
 - Copy and paste each of these into their respective streamelements windows to run.
 
 ### Version 1 Features
-1. Next add a delay on messages disappearing by adding how log it will take for the text to be typed out before remove row.
-2. Then halt interruptions until the text is finished displaying, either through some sort of queue or determining how to slow chat input on twitch's end.
-4. Then add custom chat avatar to project via imgur link
+3. Add custom chat avatar to project via imgur link
 
 ## Future Additions:
 ### Version 2 Features:
