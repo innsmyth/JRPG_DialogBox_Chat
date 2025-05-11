@@ -14,7 +14,8 @@ let bkgdImg = ["https://imgur.com/daJRCMU.png", "https://imgur.com/vQlqCnW.png"]
 let msgIcon = ["fa-solid fa-diamond", "fa-solid fa-eye"];
 let msgMainClr = ["rgba(113, 160, 156, 1.0)", "rgba(246, 174, 40, 1.0)"];
 let msgAcntClr = ["rgba(246, 174, 40, 1.0)", "rgba(113, 160, 156, 1.0)"];
-let lastDelay = 0;
+let msgQueue = [];
+let msgComplete = true;
 
 window.addEventListener('onEventReceived', function (obj) {
     if (obj.detail.event.listener === 'widget-button') {
@@ -94,16 +95,31 @@ window.addEventListener('onEventReceived', function (obj) {
     }
     
     if (obj.detail.listener !== "message") return;
-
-    loadAvatarAndMessage(obj);
-    
-});
-
-function loadAvatarAndMessage(obj) {
     let data = obj.detail.event.data;
     if (data.text.startsWith("!") && hideCommands === "yes") return;
     if (ignoredUsers.indexOf(data.nick) !== -1) return;
-    removeRow();
+
+    if (msgComplete && msgQueue.length === 0) {
+        data.text = "Not a message from the backlog queue, you created a new instance of the checkMsgQueue function";
+        msgComplete = false;
+        msgQueue.push(data);
+        checkMsgQueue();
+    } else {
+        data.text = "This is a message from the queue backlog";
+        msgComplete = false;
+        msgQueue.push(data);
+    }
+});
+
+function checkMsgQueue() {
+    let data = msgQueue.shift();
+    let textDelay = (data.text.length * iSpeedDef) + (data.emotes.length * 300);
+
+    loadAvatarAndMessage(data, textDelay);
+    setTimeout("checkMsgQueue()", textDelay);
+}
+
+function loadAvatarAndMessage(data, textDelay) {
     let message = attachEmotes(data);
     let badges = "", badge;
     if (provider === 'mixer') {
@@ -115,7 +131,7 @@ function loadAvatarAndMessage(obj) {
     }
     let username = data.displayName;
     username = `${username}`;
-    let hideElements = hideAfter * 1000 + data.text.length * iSpeedDef + data.emotes.length * 300;
+    let hideElements = (hideAfter * 1000) + textDelay;
     iSpeed = iSpeedDef;
     addAvatar(hideElements);
     addMessage(username, badges, message, data.isAction, data.userId, data.msgId, hideElements);
@@ -208,7 +224,7 @@ function addAvatar(hideElements){
     `);
     if (hideAfter !== 999) {
         $(element).appendTo('.avatar-container').delay(hideElements).queue(function () {
-            $(this).removeClass(animationIn).addClass(animationOut).delay(0).queue(function () {
+            $(this).removeClass(animationIn).addClass(animationOut).queue(function () {
                 $(this).remove()
             }).dequeue();
         });
@@ -243,8 +259,8 @@ function addMessage(username, badges, message, isAction, uid, msgId, hideElement
     if (addition === "append") {
         if (hideAfter !== 999) {
             $(element).appendTo('.main-container').delay(hideElements).queue(function () {
-                $(this).removeClass(animationIn).addClass(animationOut).delay(0).queue(function () {
-                    $(this).remove()
+                $(this).removeClass(animationIn).addClass(animationOut).queue(function () {
+                    $(this).remove();
                 }).dequeue()
             });
         } else {
@@ -253,7 +269,7 @@ function addMessage(username, badges, message, isAction, uid, msgId, hideElement
     } else {
         if (hideAfter !== 999) {
             $(element).prependTo('.main-container').delay(hideElements).queue(function () {
-                $(this).removeClass(animationIn).addClass(animationOut).delay(0).queue(function () {
+                $(this).removeClass(animationIn).addClass(animationOut).queue(function () {
                     $(this).remove()
                 }).dequeue()
             });
@@ -274,9 +290,6 @@ function addMessage(username, badges, message, isAction, uid, msgId, hideElement
 
     if (totalMessages > messagesLimit) {
         removeRow();
-        lastDelay = 0;
-    } else {
-        lastDelay = hideElements;
     }
 }
 
@@ -318,15 +331,17 @@ function typewriter()
         sContents += newMsg[iRow++] + '<br />';
     }
 
-    if ( newMsg.substring(iTextPos, iTextPos+1) === "<" ){ //&#60
+    if ( newMsg.substring(iTextPos, iTextPos+1) === "<" ){
         iSpeed = 0;
     }
-    if ( newMsg.substring(iTextPos, iTextPos+1) === ">" ){ //&#62
+    if ( newMsg.substring(iTextPos, iTextPos+1) === ">" ){
         iSpeed = iSpeedDef;
     }
 
     destination.innerHTML = sContents + newMsg.substring(0, iTextPos) + "";
     if ( iTextPos++ != iMsgLength ) {
         setTimeout("typewriter()", iSpeed);
+    } else {
+        msgComplete = true;
     }
 }
