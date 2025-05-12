@@ -1,5 +1,5 @@
-# JRPG_DialogBox_Chat
-JRPG Dialog box inspired chat for stream elements
+# FE_Awakening_DialogBox_Chat
+FE Awakening style Dialog box inspired chat for stream elements
 
 - Copy and paste each of these into their respective streamelements windows to run.
 
